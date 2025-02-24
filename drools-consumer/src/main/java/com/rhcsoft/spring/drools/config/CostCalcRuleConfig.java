@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class CostSaveRuleConfig {
+public class CostCalcRuleConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CostSaveRuleConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CostCalcRuleConfig.class);
     private static final String COST_CALC_RULES_DRL = "rules/cost-calc.drl";
 
     @Bean

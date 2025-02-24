@@ -2,6 +2,7 @@ package com.rhcsoft.spring.drools.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,6 +26,7 @@ import com.rhcsoft.spring.drools.model.CostCalculationRequest;
 import com.rhcsoft.spring.drools.model.CostDataRequest;
 import com.rhcsoft.spring.drools.model.CostModel;
 import com.rhcsoft.spring.drools.service.CostCalculatorService;
+import com.rhcsoft.spring.drools.service.CostRecalcService;
 import com.rhcsoft.spring.drools.service.exception.BusinessException;
 
 @WebMvcTest(CostCalculatorController.class)
@@ -36,6 +38,9 @@ public class CostCalculatorControllerTest {
     @MockitoBean
     private CostCalculatorService costCalculatorService;
 
+    @MockitoBean
+    private CostRecalcService costRecalcService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -46,6 +51,8 @@ public class CostCalculatorControllerTest {
         costModel = new CostModel();
         costModel.setId("1");
         costModel.setTotalCost(new BigDecimal(100.0));
+
+        doNothing().when(costRecalcService).recalcById(anyString());
     }
 
     @Test

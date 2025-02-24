@@ -21,6 +21,7 @@ import com.rhcsoft.spring.drools.model.CostDataRequest;
 import com.rhcsoft.spring.drools.model.CostDataResponse;
 import com.rhcsoft.spring.drools.model.CostModel;
 import com.rhcsoft.spring.drools.service.CostCalculatorService;
+import com.rhcsoft.spring.drools.service.CostRecalcService;
 import com.rhcsoft.spring.drools.service.exception.BusinessException;
 
 @RestController
@@ -32,13 +33,18 @@ public class CostCalculatorController {
     @Autowired
     private CostCalculatorService costCalculatorService;
 
+    @Autowired
+    private CostRecalcService recalcService;
+
     @PutMapping
     public ResponseEntity<CostDataResponse> saveCostCalculation(@RequestBody CostDataRequest request)
             throws BusinessException {
 
         LOGGER.info("Saving cost calculation");
         CostModel costModel = costCalculatorService.saveCostCalculation(request);
-        LOGGER.info("Cost calculation saved: " + costModel.getId());
+        LOGGER.info("Cost calculation saved, will be recalculated: " + costModel.getId());
+
+        recalcService.recalcById(costModel.getId());
 
         CostDataResponse response = new CostDataResponse() {
             {

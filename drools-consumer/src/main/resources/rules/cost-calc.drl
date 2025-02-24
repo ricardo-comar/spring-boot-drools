@@ -1,11 +1,11 @@
-import com.rhcsoft.spring.drools.model.CostModel;
+import com.rhcsoft.spring.drools.entity.CostEntity;
 global com.rhcsoft.spring.drools.model.CostCalcResult result;
 
 dialect "mvel"
 
 rule "Checking if is fragile"
  when 
-  CostModel(isFragile)
+  CostEntity(isFragile)
  then
   result.setCostFactor(new java.math.BigDecimal(1.5))
 end

@@ -1,7 +1,6 @@
 package com.rhcsoft.spring.drools.service.impl;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.rhcsoft.spring.drools.entity.CostEntity;
 import com.rhcsoft.spring.drools.mapper.EntityModelMapper;
-import com.rhcsoft.spring.drools.model.CostCalcResult;
 import com.rhcsoft.spring.drools.model.CostDataRequest;
 import com.rhcsoft.spring.drools.model.CostModel;
 import com.rhcsoft.spring.drools.repository.CostEntityRepository;
@@ -25,10 +23,10 @@ public class CostCalculatorServiceImpl implements CostCalculatorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CostCalculatorServiceImpl.class);
 
     @Autowired
-    private CostEntityRepository repo;
+    private EntityModelMapper mapper;
 
     @Autowired
-    private EntityModelMapper mapper;
+    private CostEntityRepository repo;
 
     @Override
     public CostModel saveCostCalculation(CostDataRequest request) throws BusinessException {
@@ -87,18 +85,6 @@ public class CostCalculatorServiceImpl implements CostCalculatorService {
         LOGGER.info("Getting all cost calculation ids");
 
         return repo.findAllIds();
-    }
-
-    @Override
-    public Optional<String> recalculateCost(CostCalcResult result) {
-        LOGGER.info("Recalculating cost for id: {}", result.getCostId());
-
-        return repo.findById(result.getCostId()).map(entity -> {
-            entity.setCostFactor(result.getCostFactor());
-            entity.setCalculatedAt(LocalDateTime.now());
-            repo.save(entity);
-            return Optional.of(entity.getId());
-        }).orElse(Optional.empty());
     }
 
     protected BigDecimal calculateTotalCost(CostEntity entity, BigDecimal quantity) {

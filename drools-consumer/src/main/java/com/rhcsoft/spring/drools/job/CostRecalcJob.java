@@ -1,18 +1,13 @@
 package com.rhcsoft.spring.drools.job;
 
-import java.math.BigDecimal;
-
-import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.rhcsoft.spring.drools.model.CostCalcResult;
 import com.rhcsoft.spring.drools.service.CostCalculatorService;
+import com.rhcsoft.spring.drools.service.CostRecalcService;
 
 @Component
 public class CostRecalcJob {
@@ -23,7 +18,7 @@ public class CostRecalcJob {
     private CostCalculatorService service;
 
     @Autowired
-    private KieContainer kieContainer;
+    private CostRecalcService recalcService;
 
     @Scheduled(cron = "0 * * * * *")
     public void runRecalculation() {
@@ -31,35 +26,10 @@ public class CostRecalcJob {
 
         service.getCostCalculationIds().forEach(id -> {
             LOGGER.info("Recalculating cost for id: " + id);
-            recalcById(id);
+            recalcService.recalcById(id);
         });
 
         LOGGER.info("Finished cost recalculation job");
-    }
-
-    @Async
-    public void recalcById(String id) {
-
-        service.getCostCalculationById(id).ifPresentOrElse(model -> {
-            LOGGER.info("Cost model found for id: " + id);
-
-            CostCalcResult result = new CostCalcResult();
-            result.setCostId(id);
-            result.setCostFactor(BigDecimal.ONE);
-
-            KieSession kieSession = kieContainer.newKieSession();
-            kieSession.setGlobal("result", result);
-            kieSession.insert(model);
-            kieSession.fireAllRules();
-            kieSession.dispose();
-
-            service.recalculateCost(result);
-            LOGGER.info("Cost recalculated for id: " + id);
-
-        }, () -> {
-            LOGGER.error("Cost model not found for id: " + id);
-        });
-
     }
 
 }
