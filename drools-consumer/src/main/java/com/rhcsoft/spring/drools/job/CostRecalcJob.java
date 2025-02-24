@@ -1,7 +1,9 @@
 package com.rhcsoft.spring.drools.job;
 
-import java.util.Optional;
+import java.math.BigDecimal;
 
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.rhcsoft.spring.drools.model.CostCalcResult;
 import com.rhcsoft.spring.drools.service.CostCalculatorService;
 
 @Component
@@ -18,6 +21,9 @@ public class CostRecalcJob {
 
     @Autowired
     private CostCalculatorService service;
+
+    @Autowired
+    private KieContainer kieContainer;
 
     @Scheduled(cron = "0 * * * * *")
     public void runRecalculation() {
@@ -33,8 +39,27 @@ public class CostRecalcJob {
 
     @Async
     public void recalcById(String id) {
-        Optional<String> idRecalculated = service.recalculateCost(id);
-        LOGGER.info("Cost recalculated for id: " + idRecalculated.orElse(null));
+
+        service.getCostCalculationById(id).ifPresentOrElse(model -> {
+            LOGGER.info("Cost model found for id: " + id);
+
+            CostCalcResult result = new CostCalcResult();
+            result.setCostId(id);
+            result.setCostFactor(BigDecimal.ONE);
+
+            KieSession kieSession = kieContainer.newKieSession();
+            kieSession.setGlobal("result", result);
+            kieSession.insert(model);
+            kieSession.fireAllRules();
+            kieSession.dispose();
+
+            service.recalculateCost(result);
+            LOGGER.info("Cost recalculated for id: " + id);
+
+        }, () -> {
+            LOGGER.error("Cost model not found for id: " + id);
+        });
+
     }
 
 }

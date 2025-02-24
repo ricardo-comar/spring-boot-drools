@@ -36,6 +36,9 @@ public class CostEntity {
     private Boolean isFragile;
 
     @Column(nullable = false)
+    private BigDecimal costFactor;
+
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = true)

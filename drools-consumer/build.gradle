@@ -31,7 +31,10 @@ dependencies {
 	implementation 'org.mapstruct:mapstruct:1.6.3'
 
 	implementation 'org.kie:kie-spring:7.74.1.Final'
+	implementation 'org.drools:drools-decisiontables:10.0.0'
 	implementation 'org.drools:drools-core:10.0.0'
+	implementation 'org.drools:drools-compiler:10.0.0'
+	implementation 'org.drools:drools-mvel:10.0.0'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
 	annotationProcessor 'org.projectlombok:lombok'

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.rhcsoft.spring.drools.entity.CostEntity;
 import com.rhcsoft.spring.drools.mapper.EntityModelMapper;
+import com.rhcsoft.spring.drools.model.CostCalcResult;
 import com.rhcsoft.spring.drools.model.CostDataRequest;
 import com.rhcsoft.spring.drools.model.CostModel;
 import com.rhcsoft.spring.drools.repository.CostEntityRepository;
@@ -31,10 +32,13 @@ public class CostCalculatorServiceImpl implements CostCalculatorService {
 
     @Override
     public CostModel saveCostCalculation(CostDataRequest request) throws BusinessException {
-
         LOGGER.info("Saving cost calculation");
 
-        CostEntity entity = new CostEntity();
+        CostEntity entity = new CostEntity() {
+            {
+                setCostFactor(BigDecimal.ONE);
+            }
+        };
         if (request.getId() != null) {
             entity = repo.findById(request.getId())
                     .orElseThrow(() -> new BusinessException("Cost entity not found for id: " + request.getId()));
@@ -49,7 +53,6 @@ public class CostCalculatorServiceImpl implements CostCalculatorService {
 
     @Override
     public Optional<CostModel> calculateCost(String costId, BigDecimal quantity) throws BusinessException {
-
         LOGGER.info("Calculating cost for costId: {} and quantity: {}", costId, quantity);
 
         return repo.findById(costId).map(entity -> {
@@ -87,17 +90,18 @@ public class CostCalculatorServiceImpl implements CostCalculatorService {
     }
 
     @Override
-    public Optional<String> recalculateCost(String id) {
-        LOGGER.info("Recalculating cost for id: {}", id);
+    public Optional<String> recalculateCost(CostCalcResult result) {
+        LOGGER.info("Recalculating cost for id: {}", result.getCostId());
 
-        return repo.findById(id).map(entity -> {
+        return repo.findById(result.getCostId()).map(entity -> {
+            entity.setCostFactor(result.getCostFactor());
             entity.setCalculatedAt(LocalDateTime.now());
             repo.save(entity);
-            return Optional.of(id);
+            return Optional.of(entity.getId());
         }).orElse(Optional.empty());
     }
 
     protected BigDecimal calculateTotalCost(CostEntity entity, BigDecimal quantity) {
-        return entity.getUnitCost().multiply(quantity);
+        return entity.getUnitCost().multiply(entity.getCostFactor()).multiply(quantity).add(entity.getFreigCost());
     }
 }
