@@ -27,10 +27,6 @@ public class CostModel {
 
     transient BigDecimal totalCost;
 
-    private String createdDate;
-
-    private String updatedDate;
-
     private String description;
 
     private String comments;

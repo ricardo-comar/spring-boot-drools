@@ -1,6 +1,7 @@
 package com.rhcsoft.spring.drools.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import com.rhcsoft.spring.drools.model.CostDataRequest;
@@ -16,5 +17,9 @@ public interface CostCalculatorService {
     Optional<CostModel> getCostCalculationById(String id);
 
     Optional<String> deleteCostCalculationById(String id);
+
+    List<String> getCostCalculationIds();
+
+    Optional<String> recalculateCost(String id);
 
 }

@@ -2,6 +2,8 @@ package com.rhcsoft.spring.drools.controller;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,13 +27,19 @@ import com.rhcsoft.spring.drools.service.exception.BusinessException;
 @RequestMapping("/cost-calculator/calculator")
 public class CostCalculatorController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CostCalculatorController.class);
+
     @Autowired
     private CostCalculatorService costCalculatorService;
 
     @PutMapping
     public ResponseEntity<CostDataResponse> saveCostCalculation(@RequestBody CostDataRequest request)
             throws BusinessException {
+
+        LOGGER.info("Saving cost calculation");
         CostModel costModel = costCalculatorService.saveCostCalculation(request);
+        LOGGER.info("Cost calculation saved: " + costModel.getId());
+
         CostDataResponse response = new CostDataResponse() {
             {
                 setId(costModel.getId());
@@ -50,6 +58,7 @@ public class CostCalculatorController {
                 request.getQuantity());
 
         return costResponse.map(cost -> {
+            LOGGER.info("Cost calculated for id: " + request.getCostId());
             CostCalculationResponse response = new CostCalculationResponse() {
                 {
                     setId(request.getCostId());
@@ -58,13 +67,17 @@ public class CostCalculatorController {
                 }
             };
             return ResponseEntity.ok(response);
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+        }).orElseGet(() -> {
+            LOGGER.warn("Cost calculation failed for id: " + request.getCostId());
+            return ResponseEntity.notFound().build();
+        });
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CostDataResponse> getCostCalculationById(@PathVariable String id) {
         Optional<CostModel> costModel = costCalculatorService.getCostCalculationById(id);
         return costModel.map(cost -> {
+            LOGGER.info("Cost calculated for id: " + id);
             CostDataResponse response = new CostDataResponse() {
                 {
                     setId(id);
@@ -72,13 +85,21 @@ public class CostCalculatorController {
                 }
             };
             return ResponseEntity.ok(response);
-        }).orElseGet(() -> ResponseEntity.notFound().build());
+        }).orElseGet(() -> {
+            LOGGER.warn("Cost calculation failed for id: " + id);
+            return ResponseEntity.notFound().build();
+        });
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCostCalculationById(@PathVariable String id) {
+        LOGGER.info("Cost deletion for id: " + id);
+
         Optional<String> deletedId = costCalculatorService.deleteCostCalculationById(id);
-        return deletedId.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return deletedId.map(ResponseEntity::ok).orElseGet(() -> {
+            LOGGER.warn("Cost deletion failed for id: " + id);
+            return ResponseEntity.notFound().build();
+        });
     }
 
 }
