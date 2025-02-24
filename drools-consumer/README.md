@@ -12,31 +12,19 @@ Before you begin, ensure you have the following installed on your local machine:
 
 ## Setup Instructions
 
-1. **Clone the repository**
-
-    Open a terminal and run the following command to clone the repository:
-
-    ```sh
-    git clone https://github.com/your-username/spring-boot-drools.git
-    ```
-
-2. **Build the project**
+1. **Build the project**
 
     Use Maven to build the project:
-
     ```sh
     gradle build
     ```
-
-3. **Run the application**
+1. **Run the application**
 
     After the build is successful, run the Spring Boot application:
-
     ```sh
     gradle bootRun
     ```
-
-4. **Access the application**
+1. **Access the application**
 
     Once the application is running, you can access it at `http://localhost:8080`.
 
