@@ -32,11 +32,8 @@ public class CostCalculatorServiceImpl implements CostCalculatorService {
     public CostModel saveCostCalculation(CostDataRequest request) throws BusinessException {
         LOGGER.info("Saving cost calculation");
 
-        CostEntity entity = new CostEntity() {
-            {
-                setCostFactor(BigDecimal.ONE);
-            }
-        };
+        CostEntity entity = new CostEntity();
+        entity.setCostFactor(BigDecimal.ONE);
         if (request.getId() != null) {
             entity = repo.findById(request.getId())
                     .orElseThrow(() -> new BusinessException("Cost entity not found for id: " + request.getId()));
@@ -88,6 +85,6 @@ public class CostCalculatorServiceImpl implements CostCalculatorService {
     }
 
     protected BigDecimal calculateTotalCost(CostEntity entity, BigDecimal quantity) {
-        return entity.getUnitCost().multiply(entity.getCostFactor()).multiply(quantity).add(entity.getFreigCost());
+        return entity.getUnitCost().multiply(entity.getCostFactor()).multiply(quantity).add(entity.getFreightCost());
     }
 }

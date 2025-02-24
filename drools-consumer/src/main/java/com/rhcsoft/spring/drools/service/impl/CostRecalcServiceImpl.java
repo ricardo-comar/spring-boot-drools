@@ -29,7 +29,7 @@ public class CostRecalcServiceImpl implements CostRecalcService {
     @Override
     public void recalcById(String id) {
 
-        repo.findById(id).ifPresent(entity -> {
+        repo.findById(id).ifPresentOrElse(entity -> {
             LOGGER.info("Cost model found for id: " + id);
 
             CostCalcResult result = new CostCalcResult();
@@ -45,10 +45,11 @@ public class CostRecalcServiceImpl implements CostRecalcService {
             entity.setCostFactor(result.getCostFactor());
             repo.save(entity);
             LOGGER.info("Cost recalculated for id: " + id);
-            return;
-        });
 
-        LOGGER.error("Cost model not found for id: " + id);
+        }, () -> {
+
+            LOGGER.error("Cost model not found for id: " + id);
+        });
 
     }
 

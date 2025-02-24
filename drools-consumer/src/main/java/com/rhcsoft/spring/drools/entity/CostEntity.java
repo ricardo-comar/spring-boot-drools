@@ -30,7 +30,7 @@ public class CostEntity {
     private BigDecimal unitCost;
 
     @Column(nullable = false)
-    private BigDecimal freigCost;
+    private BigDecimal freightCost;
 
     @Column(nullable = false)
     private Boolean isFragile;

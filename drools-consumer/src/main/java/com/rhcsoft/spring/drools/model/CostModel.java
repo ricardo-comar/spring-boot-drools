@@ -21,7 +21,7 @@ public class CostModel {
     private BigDecimal unitCost;
 
     @NotBlank
-    private BigDecimal freigCost;
+    private BigDecimal freightCost;
 
     private Boolean isFragile;
 
