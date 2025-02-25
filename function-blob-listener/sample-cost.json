@@ -1,0 +1,10 @@
+{
+    "costDetails": {
+        "name": "Sample Cost",
+        "unitCost": 50,
+        "freigCost": 37,
+        "isFragile": false,
+        "description": "Sample Cost",
+        "comments": "Sample Cost"
+    }
+}

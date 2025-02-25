@@ -1,3 +1,9 @@
 {
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "azureFunctions.javaBuildTool": "gradle",
+    "azureFunctions.deploySubpath": "function-blob-listener/build/azure-functions/function-blob-listener-1740487884863",
+    "azureFunctions.projectLanguage": "Java",
+    "azureFunctions.projectRuntime": "~4",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "package (functions)"
 }
