@@ -1,6 +1,7 @@
 package com.rhcsoft.spring.drools.service.impl;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -43,6 +44,7 @@ public class CostRecalcServiceImpl implements CostRecalcService {
             kieSession.dispose();
 
             entity.setCostFactor(result.getCostFactor());
+            entity.setCalculatedAt(LocalDateTime.now());
             repo.save(entity);
             LOGGER.info("Cost recalculated for id: " + id);
 

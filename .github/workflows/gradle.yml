@@ -36,7 +36,11 @@ jobs:
         gradle-version: '8.11.1'
 
     - name: Build Drools Consumer
-      run: gradle build
+      run: gradle test build
+      working-directory: ./drools-consumer
+
+    - name: Build Function Listener
+      run: gradle test build
       working-directory: ./drools-consumer
         
   # dependency-submission:
