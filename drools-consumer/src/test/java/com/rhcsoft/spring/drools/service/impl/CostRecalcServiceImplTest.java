@@ -46,6 +46,7 @@ public class CostRecalcServiceImplTest {
                 setId("1234");
                 setIsFragile(false);
                 setCostFactor(new BigDecimal(1.0));
+                setCalculatedAt(any());
             }
         });
 
@@ -69,6 +70,7 @@ public class CostRecalcServiceImplTest {
                 setId("1234");
                 setIsFragile(true);
                 setCostFactor(new BigDecimal(1.5));
+                setCalculatedAt(any());
             }
         });
 

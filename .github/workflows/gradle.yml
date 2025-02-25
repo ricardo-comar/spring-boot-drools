@@ -41,7 +41,7 @@ jobs:
 
     - name: Build Function Listener
       run: gradle test build
-      working-directory: ./drools-consumer
+      working-directory: ./function-blob-listener
         
   # dependency-submission:
 

@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,10 +47,13 @@ public class CostCalculatorControllerTest {
 
     private CostModel costModel;
 
+    private String costId = "123";
+
     @BeforeEach
     void setUp() {
+        costId = UUID.randomUUID().toString();
         costModel = new CostModel();
-        costModel.setId("1");
+        costModel.setId(costId);
         costModel.setTotalCost(new BigDecimal(100.0));
 
         doNothing().when(costRecalcService).recalcById(anyString());
@@ -94,9 +98,9 @@ public class CostCalculatorControllerTest {
     @Test
     void testCalculateCost() throws Exception {
         CostCalculationRequest request = new CostCalculationRequest();
-        request.setCostId("1");
-        request.setQuantity(new BigDecimal(10));
-        when(costCalculatorService.calculateCost(anyString(), any())).thenReturn(Optional.of(costModel));
+        request.setCostId(costId);
+        request.setQuantity(BigDecimal.TEN);
+        when(costCalculatorService.calculateCost(costId, BigDecimal.TEN)).thenReturn(Optional.of(costModel));
 
         mockMvc.perform(post("/cost-calculator/calculator")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,9 +111,10 @@ public class CostCalculatorControllerTest {
     @Test
     void testCalculateCostBusinessException() throws Exception {
         CostCalculationRequest request = new CostCalculationRequest();
-        request.setCostId("1");
-        request.setQuantity(new BigDecimal(10));
-        when(costCalculatorService.calculateCost(anyString(), any())).thenThrow(new BusinessException("test error"));
+        request.setCostId(costId);
+        request.setQuantity(BigDecimal.TEN);
+        when(costCalculatorService.calculateCost(costId, BigDecimal.TEN))
+                .thenThrow(new BusinessException("test error"));
 
         mockMvc.perform(post("/cost-calculator/calculator")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -120,8 +125,8 @@ public class CostCalculatorControllerTest {
     @Test
     void testCalculateCostServerError() throws Exception {
         CostCalculationRequest request = new CostCalculationRequest();
-        request.setCostId("1");
-        request.setQuantity(new BigDecimal(10));
+        request.setCostId(costId);
+        request.setQuantity(BigDecimal.TEN);
         when(costCalculatorService.calculateCost(anyString(), any())).thenThrow(new RuntimeException());
 
         mockMvc.perform(post("/cost-calculator/calculator")
@@ -132,36 +137,37 @@ public class CostCalculatorControllerTest {
 
     @Test
     void testGetCostCalculationById() throws Exception {
-        when(costCalculatorService.getCostCalculationById(anyString())).thenReturn(Optional.of(costModel));
+        when(costCalculatorService.getCostCalculationById(costId)).thenReturn(Optional.of(costModel));
 
-        mockMvc.perform(get("/cost-calculator/calculator/1")
+        mockMvc.perform(get("/cost-calculator/calculator/{costId}", costId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+
     }
 
     @Test
     void testGetCostCalculationByIdNotFound() throws Exception {
-        when(costCalculatorService.getCostCalculationById(anyString())).thenReturn(Optional.empty());
+        when(costCalculatorService.getCostCalculationById(costId)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/cost-calculator/calculator/1")
+        mockMvc.perform(get("/cost-calculator/calculator/{costId}", costId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void testDeleteCostCalculationById() throws Exception {
-        when(costCalculatorService.deleteCostCalculationById(anyString())).thenReturn(Optional.of("1"));
+        when(costCalculatorService.deleteCostCalculationById(costId)).thenReturn(Optional.of(costId));
 
-        mockMvc.perform(delete("/cost-calculator/calculator/1")
+        mockMvc.perform(delete("/cost-calculator/calculator/{costId}", costId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testDeleteCostCalculationByIdNotFound() throws Exception {
-        when(costCalculatorService.deleteCostCalculationById(anyString())).thenReturn(Optional.empty());
+        when(costCalculatorService.deleteCostCalculationById(costId)).thenReturn(Optional.empty());
 
-        mockMvc.perform(delete("/cost-calculator/calculator/1")
+        mockMvc.perform(delete("/cost-calculator/calculator/{costId}", costId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

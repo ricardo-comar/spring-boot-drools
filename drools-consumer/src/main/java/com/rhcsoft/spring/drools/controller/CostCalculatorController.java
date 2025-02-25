@@ -24,6 +24,8 @@ import com.rhcsoft.spring.drools.service.CostCalculatorService;
 import com.rhcsoft.spring.drools.service.CostRecalcService;
 import com.rhcsoft.spring.drools.service.exception.BusinessException;
 
+import jakarta.validation.constraints.Pattern;
+
 @RestController
 @RequestMapping("/cost-calculator/calculator")
 public class CostCalculatorController {
@@ -80,7 +82,8 @@ public class CostCalculatorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CostDataResponse> getCostCalculationById(@PathVariable String id) {
+    public ResponseEntity<CostDataResponse> getCostCalculationById(
+            @PathVariable(name = "id") @Pattern(regexp = "^[{]?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[}]?$", message = "Invalid UUID format") String id) {
         Optional<CostModel> costModel = costCalculatorService.getCostCalculationById(id);
         return costModel.map(cost -> {
             LOGGER.info("Cost calculated for id: " + id);
@@ -98,7 +101,8 @@ public class CostCalculatorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCostCalculationById(@PathVariable String id) {
+    public ResponseEntity<String> deleteCostCalculationById(
+            @PathVariable(name = "id") @Pattern(regexp = "^[{]?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}[}]?$", message = "Invalid UUID format") String id) {
         LOGGER.info("Cost deletion for id: " + id);
 
         Optional<String> deletedId = costCalculatorService.deleteCostCalculationById(id);
