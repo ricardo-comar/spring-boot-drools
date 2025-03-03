@@ -1,4 +1,4 @@
-# Drools Consumer
+# Cost Calculator Service
 
 This project demonstrates how to set up and run a Spring Boot application with Drools locally.
 

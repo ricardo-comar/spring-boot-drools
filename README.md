@@ -2,7 +2,7 @@
 
 
 ## Modules
-- [Drools service][droolsServiceDefinition]
+- [Calculator service][calculatorServiceDefinition]
 - [Function Listener][functionListenerDefinition]
 
 ## Setup Instructions
@@ -46,5 +46,5 @@ If you wish to contribute to this project, please follow these steps:
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-[droolsServiceDefinition]: ./drools-consumer/README.md
+[calculatorServiceDefinition]: ./cost-calculator/README.md
 [functionListenerDefinition]: ./function-blob-listener/README.md
